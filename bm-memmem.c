@@ -27,7 +27,9 @@ static void *_memmem_bm(void *haystack, size_t haystacklen,
 
     _fill_table(needle, needlelen);
     
-    int pos = 0;  // Position of the needle with respect to haystack 
+    /* Position of the needle with respect 
+     * to the haystack */
+    int pos = 0;
 
     while (pos <= (haystacklen - needlelen)) { 
         int n_idx = needlelen - 1; 
@@ -37,22 +39,23 @@ static void *_memmem_bm(void *haystack, size_t haystacklen,
             printf(" ");
         printf("%s\n\n", (char*)needle);
   
-        /* Keep reducing index n_idx of needle while  
-           characters of needle and haystack are  
-           matching at this pos */
+        /* Keep decreasing the needle index while 
+         * characters of the needle and haystack
+         * are matching at this position */
         while (n_idx >= 0 && 
                ((char*)needle)[n_idx] == ((char*)haystack)[pos + n_idx]) 
             n_idx--; 
   
-        /* If the needle is present at current 
-           pos, then index n_idx will become -1 after 
-           the above loop */
+        /* If the needle is present at this 
+         * position, needle index will be -1 */
         if (n_idx < 0) {
             printf("needle occurs at position = %d\n", pos);   
-            break;
+            return haystack + pos;
         } else {
             int h_int = (int)((char*)haystack)[pos + n_idx];
 
+            /* Move the search position based on
+             * the value in the bad chars table */
             if (h_int >= _NUM_CHARS || _bad_chars[h_int] == -1) {
                 pos += needlelen;
                 printf("shifting %d\n", needlelen);
@@ -63,7 +66,9 @@ static void *_memmem_bm(void *haystack, size_t haystacklen,
             }
         }
     } 
-    return haystack + pos;
+    
+    printf("needle not found\n");
+    return NULL;
 }
 
 static void _fill_table_r(char *needle, size_t needlelen) {
@@ -86,7 +91,9 @@ static void *_memmem_rbm(void *haystack, size_t haystacklen,
 
     _fill_table_r(needle, needlelen);
     
-    int pos = haystacklen - needlelen;  // Position of the needle with respect to haystack 
+    /* Position of the needle with respect 
+     * to the haystack */
+    int pos = haystacklen - needlelen;
 
     while (pos >= 0) { 
         int n_idx = 0; 
@@ -96,16 +103,24 @@ static void *_memmem_rbm(void *haystack, size_t haystacklen,
             printf(" ");
         printf("%s\n\n", (char*)needle);
 
+        /* Keep increasing the needle index while 
+         * characters of the needle and haystack
+         * are matching at this position */
         while (n_idx < needlelen && 
                ((char*)needle)[n_idx] == ((char*)haystack)[pos + n_idx]) 
             n_idx++; 
 
+        /* If the needle is present at this 
+         * position, needle index will be equal
+         * to the needle length */
         if (n_idx >= needlelen) {
             printf("needle occurs at position = %d\n", pos);   
-            break;
+            return haystack + pos;
         } else {
             int h_int = (int)((char*)haystack)[pos + n_idx];
 
+            /* Move the search position based on
+             * the value in the bad chars table */
             if (h_int >= _NUM_CHARS || _bad_chars[h_int] == -1) {
                 pos -= needlelen;
                 printf("shifting %d\n", needlelen);
@@ -116,7 +131,9 @@ static void *_memmem_rbm(void *haystack, size_t haystacklen,
             }
         }
     } 
-    return haystack + pos;
+    
+    printf("needle not found\n");  
+    return NULL;
 }
 
 int main() {
